@@ -68,9 +68,24 @@ def linear_compression(rgb_array, n=10, k=8):
     print("G:\n" + str(G))
 
     print()
-    print(rgb_bin_array[0])
-    print(np.mod(rgb_bin_array[0].dot(G), np.array([2])))
+    print()
 
+    c = []
+
+    for bits in rgb_bin_array:
+        encoded = np.mod(bits.dot(G), np.array([2]))
+        c.append(encoded)
+
+    c = np.array(c)
+
+    print("c:\n" + str(c))
+
+    string = ""
+    for bits in c:
+        string += "".join([ str(bit) for bit in bits ])
+
+    print()
+    print(string)
 
 if __name__ == "__main__":
     main()
