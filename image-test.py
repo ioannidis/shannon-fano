@@ -24,12 +24,13 @@ def main():
     # Convert 4d array to 1d
     array_1d = np.ravel(array_4d)
 
-    print(array_1d)
+    print("RGB array:", array_1d)
+    print()
 
-    linear_compression()
+    linear_compression(array_1d)
 
 
-def linear_compression():
+def linear_compression(rgb_array, n=10, k=8):
     # Σελίδα 152
     # https://www.youtube.com/watch?v=oYONDEX2sh8
     # https://www.youtube.com/watch?v=z4WE2qpvaF8
@@ -46,8 +47,15 @@ def linear_compression():
     # Κωδικοποιούμε το καθένα σε μήκος n σύμφωνα με ένα σύνολο κανόνων
     # Τα n-k ψηφία ελέγχου προκύπτουν από τους γραμμικούς συνδιασμούς των ψηφίων πληροφορίας
 
-    n = 10
-    k = 8
+    rgb_bin_array = []
+
+    for num in rgb_array:
+        rgb_bin_array.append('{0:08b}'.format(num))
+
+    rgb_bin_array = np.array(rgb_bin_array)
+
+    print("RGB bin array:", rgb_bin_array)
+    print()
 
     I = np.eye(k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
