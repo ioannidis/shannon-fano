@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+import base64
 
 def main():
     # https://github.com/DanonOfficial/Huffman-Shannon-Fano-Coding/blob/master/png.py
@@ -80,12 +81,16 @@ def linear_compression(rgb_array, n=10, k=8):
 
     print("c:\n" + str(c))
 
-    string = ""
+    raw_encoded = ""
     for bits in c:
-        string += "".join([ str(bit) for bit in bits ])
+        raw_encoded += "".join([ str(bit) for bit in bits ])
 
     print()
-    print(string)
+    print(raw_encoded)
+    print()
+    base64_encoded = base64.b64encode(raw_encoded.encode())
+    print(base64_encoded.decode())
+
 
 if __name__ == "__main__":
     main()
