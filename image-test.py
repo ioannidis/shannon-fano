@@ -50,24 +50,25 @@ def linear_compression(rgb_array, n=10, k=8):
     rgb_bin_array = []
 
     for num in rgb_array:
-        rgb_bin_array.append(bin(num)[2:].zfill(k))
+        binary = bin(num)[2:].zfill(k)
+        rgb_bin_array.append([int(bit) for bit in list(binary)])
 
     rgb_bin_array = np.array(rgb_bin_array)
 
-    print("RGB bin array:", rgb_bin_array)
-    print()
-
     I = np.eye(k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
-    print("I:", I)
-    print()
-    print("P:", P)
-    print()
     G = np.concatenate((I, P), axis=1)
-    print("G:", G)
 
-def linear_encoder():
-    pass
+    print("RGB bin array:\n" + str(rgb_bin_array))
+    print()
+    print("I:\n" + str(I))
+    print()
+    print("P:\n" + str(P))
+    print()
+    print("G:\n" + str(G))
+
+    # print()
+    # print(rgb_bin_array[0].dot(G))
 
 
 if __name__ == "__main__":
