@@ -24,7 +24,7 @@ def main():
     # Convert 4d array to 1d
     array_1d = np.ravel(array_4d)
 
-    print("RGB array:", array_1d)
+    print("RGB array:\n" + str(array_1d))
     print()
 
     linear_compression(array_1d)
