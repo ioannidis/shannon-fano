@@ -50,7 +50,7 @@ def linear_compression(rgb_array, n=10, k=8):
     rgb_bin_array = []
 
     for num in rgb_array:
-        rgb_bin_array.append('{0:08b}'.format(num))
+        rgb_bin_array.append(bin(num)[2:].zfill(k))
 
     rgb_bin_array = np.array(rgb_bin_array)
 
