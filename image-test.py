@@ -26,7 +26,7 @@ def main():
 
     print(array_1d)
 
-    print(pixel_array[0, 0])
+    linear_compression()
 
 
 def linear_compression():
@@ -46,8 +46,17 @@ def linear_compression():
     # Κωδικοποιούμε το καθένα σε μήκος n σύμφωνα με ένα σύνολο κανόνων
     # Τα n-k ψηφία ελέγχου προκύπτουν από τους γραμμικούς συνδιασμούς των ψηφίων πληροφορίας
 
-    pass
+    n = 10
+    k = 8
 
+    I = np.eye(k, dtype=int)
+    P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    print("I:", I)
+    print()
+    print("P:", P)
+    print()
+    G = np.concatenate((I, P), axis=1)
+    print("G:", G)
 
 def linear_encoder():
     pass
