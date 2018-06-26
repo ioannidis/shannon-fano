@@ -29,10 +29,10 @@ def main():
     print("RGB array:\n" + str(array_1d))
     print()
 
-    linear_compression(array_1d)
+    linear_compression(width, height, array_1d)
 
 
-def linear_compression(rgb_array, n=10, k=8):
+def linear_compression(width, height, rgb_array, n=10, k=8):
     # Σελίδα 152
     # https://www.youtube.com/watch?v=oYONDEX2sh8
     # https://www.youtube.com/watch?v=z4WE2qpvaF8
@@ -113,7 +113,14 @@ def linear_compression(rgb_array, n=10, k=8):
     # JSON data
     # ==========================================================
 
-    data = { "data": base64_encoded.decode() }
+    data = {
+        "data": base64_encoded.decode(),
+        "error": 0,
+        "width": width,
+        "height": height,
+        "n": n,
+        "k": k
+    }
     print(json.dumps(data))
 
 
