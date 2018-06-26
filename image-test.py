@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 import base64
+import json
 
 def main():
     # https://github.com/DanonOfficial/Huffman-Shannon-Fano-Coding/blob/master/png.py
@@ -48,6 +49,10 @@ def linear_compression(rgb_array, n=10, k=8):
     # Κωδικοποιούμε το καθένα σε μήκος n σύμφωνα με ένα σύνολο κανόνων
     # Τα n-k ψηφία ελέγχου προκύπτουν από τους γραμμικούς συνδιασμούς των ψηφίων πληροφορίας
 
+    # ==========================================================
+    # Convert all RGB values to binary digits
+    # ==========================================================
+
     rgb_bin_array = []
 
     for num in rgb_array:
@@ -55,6 +60,10 @@ def linear_compression(rgb_array, n=10, k=8):
         rgb_bin_array.append([int(bit) for bit in list(binary)])
 
     rgb_bin_array = np.array(rgb_bin_array)
+
+    # ==========================================================
+    # Setup matrices I, P and G
+    # ==========================================================
 
     I = np.eye(k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
@@ -71,15 +80,22 @@ def linear_compression(rgb_array, n=10, k=8):
     print()
     print()
 
+    # ==========================================================
+    # Setup array of encoded RGB binary values
+    # ==========================================================
+
     c = []
 
     for bits in rgb_bin_array:
-        encoded = np.mod(bits.dot(G), np.array([2]))
+        encoded = np.mod(bits.dot(G), np.array([2])) # Apply mod 2 to limit values on 0-1
         c.append(encoded)
 
     c = np.array(c)
-
     print("c:\n" + str(c))
+
+    # ==========================================================
+    # Append all encoded bits into one string
+    # ==========================================================
 
     raw_encoded = ""
     for bits in c:
@@ -88,8 +104,17 @@ def linear_compression(rgb_array, n=10, k=8):
     print()
     print(raw_encoded)
     print()
+
+    # Base64 encoding
+
     base64_encoded = base64.b64encode(raw_encoded.encode())
-    print(base64_encoded.decode())
+
+    # ==========================================================
+    # JSON data
+    # ==========================================================
+
+    data = { "data": base64_encoded.decode() }
+    print(json.dumps(data))
 
 
 if __name__ == "__main__":
