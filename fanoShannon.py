@@ -44,11 +44,10 @@ def main():
         count[c] = count[c] / len(array_1d)
         print("{}\t=>\t{}".format(c, prob))
 
-    print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
+    # print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
 
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
         print(i)
-
 
     print("Shannon-Fano Coding: ")
 
@@ -62,12 +61,13 @@ def main():
     for i in array_1d:
         code_mes += Shannon_Fano_dict[i]
 
-    print("Message length in code: ", len(code_mes), "\nMessage code: ", code_mes)
+    print("Message length in code:", len(code_mes))
+    print("Message code:", code_mes)
 
     linear_compression(width, height, code_mes)
 
-    print("RGB array:\n" + str(array_1d))
-    print()
+    # print("RGB array:\n" + str(array_1d))
+    # print()
 
 
 def shannon_fanon_coding(seq, code):
