@@ -33,13 +33,7 @@ def main():
     # The number of occurrences for each color in the RGB array
     # ==========================================================
 
-    count = {}
-
-    for c in array_1d:
-        if c not in count:
-            count[c] = 1
-        else:
-            count[c] += 1
+    count = dict(map(lambda x: (x, list(array_1d).count(x)), array_1d))
 
     # ==========================================================
     # Print the probabilities for each color in the RGB array
@@ -49,18 +43,20 @@ def main():
         prob = count[c] / len(array_1d)
         print("{}\t=>\t{}".format(c, prob))
 
-    print((sorted(count.items(), key=itemgetter(1), reverse=True)))
-
-
     print("Shannon-Fano Coding: ")
 
     shannon_fanon_coding(count, "")
+
     for i in sorted(Shannon_Fano_dict):
         print(i, "=", Shannon_Fano_dict[i])
+
     code_mes = ""
+    
     for i in array_1d:
         code_mes += Shannon_Fano_dict[i]
+
     print("Message length in code: ", len(code_mes), "\nMessage code: ", code_mes)
+
     linear_compression(width, height, code_mes)
 
     print("RGB array:\n" + str(array_1d))
