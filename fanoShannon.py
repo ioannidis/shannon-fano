@@ -3,6 +3,7 @@ from PIL import Image
 import base64
 import json
 from operator import itemgetter
+from collections import OrderedDict
 Shannon_Fano_dict={}
 
 def main():
@@ -47,6 +48,9 @@ def main():
     for c in sorted(count):
         prob = count[c] / len(array_1d)
         print("{}\t=>\t{}".format(c, prob))
+
+    print((sorted(count.items(), key=itemgetter(1), reverse=True)))
+
 
     print("Shannon-Fano Coding: ")
 
