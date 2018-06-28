@@ -45,9 +45,12 @@ def main():
         print("{}\t=>\t{}".format(c, prob))
 
     # print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
-
+    count_sorted = {}
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
-        print(i)
+        count_sorted[i[0]] = i[1]
+
+    # prints sorted dict
+    print(count_sorted)
 
     print("Shannon-Fano Coding: ")
 
