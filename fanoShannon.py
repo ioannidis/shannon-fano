@@ -16,7 +16,7 @@ def main():
     noise       = 0     # To be filled
 
     # Load image from file
-    image = Image.open("image.jpg")
+    image = Image.open("pixel.jpg")
     print("Format: {}, Size: {}, Mode: {}".format(image.format, image.size, image.mode))
 
     width = image.size[0]
