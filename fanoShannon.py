@@ -41,7 +41,14 @@ def main():
 
     for c in sorted(count):
         prob = count[c] / len(array_1d)
+        count[c] = count[c] / len(array_1d)
         print("{}\t=>\t{}".format(c, prob))
+
+    print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
+
+    for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
+        print(i)
+
 
     print("Shannon-Fano Coding: ")
 
