@@ -28,18 +28,25 @@ def main():
     # Convert 4d array to 1d
     array_1d = np.ravel(array_4d)
 
-    print("RGB array:\n" + str(array_1d))
-    print()
+    # ==========================================================
+    # The number of occurrences for each color in the RGB array
+    # ==========================================================
 
     count = {}
+
     for c in array_1d:
         if c not in count:
             count[c] = 1
         else:
             count[c] += 1
-    # PROBABILITIES
+
+    # ==========================================================
+    # Print the probabilities for each color in the RGB array
+    # ==========================================================
+
     for c in sorted(count):
-        print(c, "=>", count[c] / len(array_1d))
+        prob = count[c] / len(array_1d)
+        print("{}\t=>\t{}".format(c, prob))
 
     print("Shannon-Fano Coding: ")
 
@@ -52,9 +59,11 @@ def main():
     print("Message length in code: ", len(code_mes), "\nMessage code: ", code_mes)
     linear_compression(width, height, code_mes)
 
+    print("RGB array:\n" + str(array_1d))
+    print()
+
 
 def shannon_fanon_coding(seq, code):
-
     a = {}
     b = {}
     if len(seq) == 1:
@@ -88,16 +97,16 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
     G = np.concatenate((I, P), axis=1)
 
-    print("RGB bin array:\n" + str(rgb_bin_array))
-    print()
-    print("I:\n" + str(I))
-    print()
-    print("P:\n" + str(P))
-    print()
-    print("G:\n" + str(G))
+    # print("RGB bin array:\n" + str(rgb_bin_array))
+    # print()
+    # print("I:\n" + str(I))
+    # print()
+    # print("P:\n" + str(P))
+    # print()
+    # print("G:\n" + str(G))
 
-    print()
-    print()
+    # print()
+    # print()
 
     # ==========================================================
     # Setup array of encoded RGB binary values
@@ -110,7 +119,7 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
         c.append(encoded)
 
     c = np.array(c)
-    print("c:\n" + str(c))
+    # print("c:\n" + str(c))
 
     # ==========================================================
     # Append all encoded bits into one string
@@ -120,9 +129,9 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
     for bits in c:
         raw_encoded += "".join([ str(bit) for bit in bits ])
 
-    print()
-    print(raw_encoded)
-    print(len(raw_encoded))
+    # print()
+    # print(raw_encoded)
+    # print(len(raw_encoded))
 
     # Base64 encoding
 
@@ -140,7 +149,7 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
         "n": n,
         "k": k
     }
-    print(json.dumps(data))
+    # print(json.dumps(data))
 
 
 if __name__ == "__main__":
