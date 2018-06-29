@@ -4,7 +4,8 @@ import base64
 import json
 from operator import itemgetter
 from collections import OrderedDict
-Shannon_Fano_dict={}
+
+fano_shannon_result = {}
 
 def main():
     # https://github.com/DanonOfficial/Huffman-Shannon-Fano-Coding/blob/master/png.py
@@ -58,16 +59,16 @@ def main():
     print(count_sorted)
 
     print("Shannon-Fano Coding: ")
-    fano_shannon_encode(ex2_book)
+    fano_shannon(ex2_book)
 
-    # for i in sorted(Shannon_Fano_dict):
-    #     print(i, "=", Shannon_Fano_dict[i])
-    print(Shannon_Fano_dict)
+    # for i in sorted(fano_shannon_result):
+    #     print(i, "=", fano_shannon_result[i])
+    print(fano_shannon_result)
 
     # code_mes = ""
     #
     # for i in array_1d:
-    #     code_mes += Shannon_Fano_dict[i]
+    #     code_mes += fano_shannon_result[i]
     #
     # print("Message length in code:", len(code_mes))
     # print("Message code:", code_mes)
@@ -78,12 +79,12 @@ def main():
     # print()
 
 
-def fano_shannon_encode(seq, code = ""):
+def fano_shannon(seq, code = ""):
     group_a = {}
     group_b = {}
 
     if len(seq) == 1:
-        Shannon_Fano_dict[seq.popitem()[0]] = code
+        fano_shannon_result[seq.popitem()[0]] = code
         return 0
 
     # Sum the values of the dict
@@ -104,8 +105,8 @@ def fano_shannon_encode(seq, code = ""):
             group_b[i] = seq[i]
 
     # Execute recursively the method for the group_a and group_b
-    fano_shannon_encode(group_a, code + "0")
-    fano_shannon_encode(group_b, code + "1")
+    fano_shannon(group_a, code + "0")
+    fano_shannon(group_b, code + "1")
 
 
 def linear_compression(width, height, rgb_code, n=10, k=8):
