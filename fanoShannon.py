@@ -74,10 +74,10 @@ def main():
     print("Message length in code:", len(code_mes))
     print("Message code:", code_mes)
 
-    linear_compression(width, height, code_mes)
-
     print("RGB array:\n" + str(dummy_img))
     print()
+
+    linear_compression(width, height, code_mes)
 
 
 def fano_shannon(seq, code = ""):
@@ -111,24 +111,29 @@ def fano_shannon(seq, code = ""):
 
 
 def linear_compression(width, height, rgb_code, n=10, k=8):
-    
-    rgb_bin_array =[]
-    for i in range(len(rgb_code)):
-        binary = int((str(rgb_code)[i:i+8]), 2)
-        binary = bin(binary)[2:].zfill(k)
-        rgb_bin_array.append([int(bit) for bit in list(binary)])
-        i = i + 8
-
-    rgb_bin_array = np.array(rgb_bin_array)
 
     # ==========================================================
-    # Setup matrices I, P and G
+    # Convert all RGB values to binary digits
     # ==========================================================
 
-    I = np.eye(k, dtype=int)
-    P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
-    G = np.concatenate((I, P), axis=1)
+    code_groups = []
 
+    for i in range(0, len(rgb_code), k):
+        padded_group = rgb_code[i:i+k].zfill(k)
+        binary_group = bytes(padded_group.encode())
+        code_groups.append(binary_group)
+
+    print(code_groups)
+
+    #
+    # # ==========================================================
+    # # Setup matrices I, P and G
+    # # ==========================================================
+    #
+    # I = np.eye(k, dtype=int)
+    # P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    # G = np.concatenate((I, P), axis=1)
+    #
     # print("RGB bin array:\n" + str(rgb_bin_array))
     # print()
     # print("I:\n" + str(I))
@@ -136,51 +141,51 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
     # print("P:\n" + str(P))
     # print()
     # print("G:\n" + str(G))
-
+    #
     # print()
     # print()
-
-    # ==========================================================
-    # Setup array of encoded RGB binary values
-    # ==========================================================
-
-    c = []
-
-    for bits in rgb_bin_array:
-        encoded = np.mod(bits.dot(G), np.array([2])) # Apply mod 2 to limit values on 0-1
-        c.append(encoded)
-
-    c = np.array(c)
+    #
+    # # ==========================================================
+    # # Setup array of encoded RGB binary values
+    # # ==========================================================
+    #
+    # c = []
+    #
+    # for bits in rgb_bin_array:
+    #     encoded = np.mod(bits.dot(G), np.array([2])) # Apply mod 2 to limit values on 0-1
+    #     c.append(encoded)
+    #
+    # c = np.array(c)
     # print("c:\n" + str(c))
-
-    # ==========================================================
-    # Append all encoded bits into one string
-    # ==========================================================
-
-    raw_encoded = ""
-    for bits in c:
-        raw_encoded += "".join([ str(bit) for bit in bits ])
-
+    #
+    # # ==========================================================
+    # # Append all encoded bits into one string
+    # # ==========================================================
+    #
+    # raw_encoded = ""
+    # for bits in c:
+    #     raw_encoded += "".join([ str(bit) for bit in bits ])
+    #
     # print()
     # print(raw_encoded)
-    # print(len(raw_encoded))
-
-    # Base64 encoding
-
-    base64_encoded = base64.b64encode(raw_encoded.encode())
-
-    # ==========================================================
-    # JSON data
-    # ==========================================================
-
-    data = {
-        "data": base64_encoded.decode(),
-        "error": 0,
-        "width": width,
-        "height": height,
-        "n": n,
-        "k": k
-    }
+    # print()
+    #
+    # # Base64 encoding
+    #
+    # base64_encoded = base64.b64encode(raw_encoded.encode())
+    #
+    # # ==========================================================
+    # # JSON data
+    # # ==========================================================
+    #
+    # data = {
+    #     "data": base64_encoded.decode(),
+    #     "error": 0,
+    #     "width": width,
+    #     "height": height,
+    #     "n": n,
+    #     "k": k
+    # }
     # print(json.dumps(data))
 
 
