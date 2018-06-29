@@ -116,7 +116,6 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
     # ==========================================================
 
     code_groups = []
-    code_groups_raw = []
 
     for i in range(0, len(rgb_code), k):
         # If the group size is less than k bits, fill with extra zeros
@@ -124,21 +123,12 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
         # Convert the group string to bytes after encoding
         # binary_group = bytes(padded_group.encode())
         code_groups.append([ int(c) for c in padded_group ])
-        code_groups_raw.append(padded_group)
 
     # Matrix with all binary digits of a group in individual positions
     code_groups = np.array(code_groups)
 
-    # Matrix with all binary digits of a group in one string
-    code_groups_raw = np.array(code_groups_raw)
-
     print("Code Groups:")
     print(code_groups)
-    print()
-    print()
-
-    print("Code Groups Raw:")
-    print(code_groups_raw)
     print()
     print()
 
@@ -174,17 +164,16 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
     # ==========================================================
 
     all_codes = np.mod(D.dot(G), np.array([2]))
-    print("All Codes:")
+
+    print("Kwdiki Leksi:")
     print(all_codes)
+    print()
+    print()
 
     codes_dict = {}
 
-    for i in range(code_groups_raw.size):
-        # Continue if we encounter the same group
-        if code_groups_raw[i] in codes_dict.keys():
-            continue
-        # Assign the new code for that unique group
-        codes_dict[code_groups_raw[i]] = all_codes[i]
+    for i in range(2**k):
+        codes_dict["".join(str(digit) for digit in D[i])] = all_codes[i]
 
     print(codes_dict)
     print()
