@@ -46,6 +46,11 @@ def main():
 
     # print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
     count_sorted = {}
+    # TODO: to be removed, only for testing ============================
+    ex1_book = {173: 0.5, 88: 0.2, 86: 0.1, 100: 0.1, 92: 0.1}
+    ex2_book = {173: 0.35, 88: 0.15, 86: 0.15, 100: 0.13, 92: 0.12, 160: 0.06, 85: 0.03, 172: 0.01}
+    # ==================================================================
+
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
         count_sorted[i[0]] = i[1]
 
