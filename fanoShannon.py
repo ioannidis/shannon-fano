@@ -16,7 +16,7 @@ def main():
     noise       = 0     # To be filled
 
     # Load image from file
-    image = Image.open("pixel.jpg")
+    image = Image.open("3X3.jpg")
     print("Format: {}, Size: {}, Mode: {}".format(image.format, image.size, image.mode))
 
     width = image.size[0]
@@ -54,13 +54,14 @@ def main():
 
     print("Shannon-Fano Coding: ")
 
-    shannon_fanon_coding(count, "")
+    shannon_fanon_coding(count_sorted, "")
 
-    for i in sorted(Shannon_Fano_dict):
-        print(i, "=", Shannon_Fano_dict[i])
+    # for i in sorted(Shannon_Fano_dict):
+    #     print(i, "=", Shannon_Fano_dict[i])
+    print(Shannon_Fano_dict)
 
     code_mes = ""
-    
+
     for i in array_1d:
         code_mes += Shannon_Fano_dict[i]
 
@@ -69,8 +70,8 @@ def main():
 
     linear_compression(width, height, code_mes)
 
-    # print("RGB array:\n" + str(array_1d))
-    # print()
+    print("RGB array:\n" + str(array_1d))
+    print()
 
 
 def shannon_fanon_coding(seq, code):
@@ -79,11 +80,11 @@ def shannon_fanon_coding(seq, code):
     if len(seq) == 1:
         Shannon_Fano_dict[seq.popitem()[0]] = code
         return 0
-    for i in sorted(seq.items(), key=itemgetter(1), reverse=True):
+    for i in seq:
         if sum(a.values()) < sum(b.values()):
-            a[i[0]] = seq[i[0]]
+            a[i] = seq[i]
         else:
-            b[i[0]] = seq[i[0]]
+            b[i] = seq[i]
     shannon_fanon_coding(a, code + "0")
     shannon_fanon_coding(b, code + "1")
 
