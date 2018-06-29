@@ -110,7 +110,7 @@ def fano_shannon(seq, code = ""):
     fano_shannon(group_b, code + "1")
 
 
-def linear_compression(width, height, rgb_code, n=10, k=8):
+def linear_compression(width, height, rgb_code, n=6, k=3):
     # ==========================================================
     # Group the RGB code string
     # ==========================================================
@@ -139,6 +139,14 @@ def linear_compression(width, height, rgb_code, n=10, k=8):
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
     G = np.concatenate((I, P), axis=1)
 
+    # D is the binary numbers from 0 to 2^k
+    D = []
+    for i in range(2**k):
+        binaries = np.binary_repr(i, width=k)
+        D.append([ int(c) for c in binaries ])
+
+    print("D:\n" + str(D))
+    print()
     print("I:\n" + str(I))
     print()
     print("P:\n" + str(P))
