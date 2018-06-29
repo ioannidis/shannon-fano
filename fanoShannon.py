@@ -48,6 +48,7 @@ def main():
     # print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
     count_sorted = {}
     # TODO: to be removed, only for testing ============================
+    dummy_img = [173, 172, 85, 173, 88, 88, 100, 86, 92, 160]
     ex1_book = {173: 0.5, 88: 0.2, 86: 0.1, 100: 0.1, 92: 0.1}
     ex2_book = {173: 0.35, 88: 0.15, 86: 0.15, 100: 0.13, 92: 0.12, 160: 0.06, 85: 0.03, 172: 0.01}
     # ==================================================================
@@ -65,18 +66,18 @@ def main():
     #     print(i, "=", fano_shannon_result[i])
     print(fano_shannon_result)
 
-    # code_mes = ""
-    #
-    # for i in array_1d:
-    #     code_mes += fano_shannon_result[i]
-    #
-    # print("Message length in code:", len(code_mes))
-    # print("Message code:", code_mes)
-    #
-    # linear_compression(width, height, code_mes)
-    #
-    # print("RGB array:\n" + str(array_1d))
-    # print()
+    code_mes = ""
+
+    for i in dummy_img:
+        code_mes += fano_shannon_result[i]
+
+    print("Message length in code:", len(code_mes))
+    print("Message code:", code_mes)
+
+    linear_compression(width, height, code_mes)
+
+    print("RGB array:\n" + str(dummy_img))
+    print()
 
 
 def fano_shannon(seq, code = ""):
