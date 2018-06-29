@@ -59,24 +59,24 @@ def main():
 
     print("Shannon-Fano Coding: ")
 
-    shannon_fanon_coding(count_sorted, "")
+    shannon_fanon_coding(ex2_book, "")
 
     # for i in sorted(Shannon_Fano_dict):
     #     print(i, "=", Shannon_Fano_dict[i])
     print(Shannon_Fano_dict)
 
-    code_mes = ""
-
-    for i in array_1d:
-        code_mes += Shannon_Fano_dict[i]
-
-    print("Message length in code:", len(code_mes))
-    print("Message code:", code_mes)
-
-    linear_compression(width, height, code_mes)
-
-    print("RGB array:\n" + str(array_1d))
-    print()
+    # code_mes = ""
+    #
+    # for i in array_1d:
+    #     code_mes += Shannon_Fano_dict[i]
+    #
+    # print("Message length in code:", len(code_mes))
+    # print("Message code:", code_mes)
+    #
+    # linear_compression(width, height, code_mes)
+    #
+    # print("RGB array:\n" + str(array_1d))
+    # print()
 
 
 def shannon_fanon_coding(seq, code):
@@ -85,11 +85,20 @@ def shannon_fanon_coding(seq, code):
     if len(seq) == 1:
         Shannon_Fano_dict[seq.popitem()[0]] = code
         return 0
+    sum = 0
     for i in seq:
-        if sum(a.values()) < sum(b.values()):
+        sum += seq[i]
+
+    half = sum/2
+
+    sum_half = 0
+    for i in seq:
+        if sum_half < half:
+            sum_half += seq[i]
             a[i] = seq[i]
         else:
             b[i] = seq[i]
+
     shannon_fanon_coding(a, code + "0")
     shannon_fanon_coding(b, code + "1")
 
