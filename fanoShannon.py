@@ -54,12 +54,11 @@ def main():
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
         count_sorted[i[0]] = i[1]
 
-    # prints sorted dict
+    # TODO: to br removed --- prints sorted dict
     print(count_sorted)
 
     print("Shannon-Fano Coding: ")
-
-    shannon_fanon_coding(ex2_book, "")
+    fano_shannon_encode(ex2_book)
 
     # for i in sorted(Shannon_Fano_dict):
     #     print(i, "=", Shannon_Fano_dict[i])
@@ -79,28 +78,34 @@ def main():
     # print()
 
 
-def shannon_fanon_coding(seq, code):
-    a = {}
-    b = {}
+def fano_shannon_encode(seq, code = ""):
+    group_a = {}
+    group_b = {}
+
     if len(seq) == 1:
         Shannon_Fano_dict[seq.popitem()[0]] = code
         return 0
-    sum = 0
-    for i in seq:
-        sum += seq[i]
 
-    half = sum/2
+    # Sum the values of the dict
+    sum_values = sum(seq.values())
+
+    # Find the half of the sum
+    half = sum_values/2
 
     sum_half = 0
     for i in seq:
+        # Sum the values of the dict until the sum_half will be
+        # grater than the half and append it in dict group_a
         if sum_half < half:
             sum_half += seq[i]
-            a[i] = seq[i]
+            group_a[i] = seq[i]
         else:
-            b[i] = seq[i]
+            # else append it in dict group_b
+            group_b[i] = seq[i]
 
-    shannon_fanon_coding(a, code + "0")
-    shannon_fanon_coding(b, code + "1")
+    # Execute recursively the method for the group_a and group_b
+    fano_shannon_encode(group_a, code + "0")
+    fano_shannon_encode(group_b, code + "1")
 
 
 def linear_compression(width, height, rgb_code, n=10, k=8):
