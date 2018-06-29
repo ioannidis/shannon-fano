@@ -19,7 +19,8 @@ def main():
     # Load image from file
     image = Image.open("3X3.jpg")
     print("Format: {}, Size: {}, Mode: {}".format(image.format, image.size, image.mode))
-
+    print()
+    
     width = image.size[0]
     height = image.size[1]
     pixel_array = image.load()
@@ -56,15 +57,19 @@ def main():
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
         count_sorted[i[0]] = i[1]
 
+    print()
+
     # TODO: to br removed --- prints sorted dict
     print(count_sorted)
 
-    print("Shannon-Fano Coding: ")
+    print()
+    print("Fano-Shanno Coding: ")
     fano_shannon(ex2_book)
 
     # for i in sorted(fano_shannon_result):
     #     print(i, "=", fano_shannon_result[i])
     print(fano_shannon_result)
+    print()
 
     code_mes = ""
 
@@ -72,8 +77,9 @@ def main():
         code_mes += fano_shannon_result[i]
 
     print("Message length in code:", len(code_mes))
+    print()
     print("Message code:", code_mes)
-
+    print()
     print("RGB array:\n" + str(dummy_img))
     print()
 
@@ -112,28 +118,33 @@ def fano_shannon(seq, code = ""):
 
 def linear_compression(width, height, rgb_code, n=6, k=3):
     # ==========================================================
-    # Group the RGB code string
+    # Separate the RGB code into groups of size k
     # ==========================================================
 
     code_groups = []
+    code_groups_raw = []
 
     for i in range(0, len(rgb_code), k):
         # If the group size is less than k bits, fill with extra zeros
         padded_group = rgb_code[i:i+k].zfill(k)
-        # Convert the group string to bytes after encoding
-        # binary_group = bytes(padded_group.encode())
         code_groups.append([ int(c) for c in padded_group ])
+        code_groups_raw.append(padded_group)
 
     # Matrix with all binary digits of a group in individual positions
     code_groups = np.array(code_groups)
+    code_groups_raw = np.array(code_groups_raw)
 
     print("Code Groups:")
     print(code_groups)
     print()
     print()
+    print("Code Groups Raw:")
+    print(code_groups_raw)
+    print()
+    print()
 
     # ==========================================================
-    # Setup matrices I, P and G
+    # Setup matrices I, P, G and D
     # ==========================================================
 
     I = np.eye(k, dtype=int)
@@ -150,72 +161,74 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
 
     print("D:\n" + str(D))
     print()
+    print()
     print("I:\n" + str(I))
+    print()
     print()
     print("P:\n" + str(P))
     print()
+    print()
     print("G:\n" + str(G))
-
     print()
     print()
 
     # ==========================================================
-    # Setup array of encoded RGB binary values
+    # Create a dictionary that maps each group with a code
     # ==========================================================
 
+    # Get encoded values with D*G and then mod 2 on all items
     all_codes = np.mod(D.dot(G), np.array([2]))
 
-    print("Kwdiki Leksi:")
+    print("Kwdikes Lekseis:")
     print(all_codes)
     print()
     print()
 
+    # Dictionary with all possible groups and their code
     codes_dict = {}
 
     for i in range(2**k):
-        codes_dict["".join(str(digit) for digit in D[i])] = all_codes[i]
+        codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in all_codes[i])
 
+    print("Pinakas D*G:")
     print(codes_dict)
     print()
     print()
 
-    c = []
-
-    for bits in code_groups:
-        encoded = np.mod(bits.dot(G), np.array([2])) # Apply mod 2 to limit values on 0-1
-        c.append(encoded)
-
-    c = np.array(c)
-    print("c:\n" + str(c))
-
     # ==========================================================
-    # Append all encoded bits into one string
+    # Create a string result with the code for each group
     # ==========================================================
 
-    raw_encoded = ""
-    for bits in c:
-        raw_encoded += "".join([ str(bit) for bit in bits ])
+    c = ""
+    print("Group\t\tCode")
+    for group in code_groups_raw:
+        print("{}\t=>\t{}".format(group, codes_dict[group]))
+        c += codes_dict[group]
 
     print()
-    print(raw_encoded)
+    print("Arxikos kwdikas apo fano-shannon:")
+    print(rgb_code)
     print()
-
-    # Base64 encoding
-
-    base64_encoded = base64.b64encode(raw_encoded.encode())
+    print("Telikos grammikos kwdikas:")
+    print(c)
+    print()
 
     # ==========================================================
     # JSON data
     # ==========================================================
 
+    encoded = base64.b64encode(c.encode())
+
     data = {
-        "data": base64_encoded.decode(),
-        "error": 0,
+        "data": encoded.decode(),
+        "error": 0, # TODO: Fill error value
         "width": width,
         "height": height,
         "n": n,
         "k": k
     }
+
+    print("JSON kai base64:")
     print(json.dumps(data))
 
 
