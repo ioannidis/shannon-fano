@@ -286,13 +286,64 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
     print()
 
 
+    # ==========================================================
+    # ERROR CORRECTION
+    # SERVER SIDE
+    # ==========================================================
+
+
+    # TODO: THA PREPEI NA GINEI TO DECODING KAI I EPANAFORA SE KOMATIA
+    # TODO: GIA TIN ORA TA PAIRNO ATOFIA APO PROIGOUMENO BIMA
+    inverted_C =  {value: key for key, value in codes_dict.items()}
+
+    decoded_word = ""
+    for group in code_groups_raw:
+        word_to_array = np.array([int(bit) for bit in codes_dict[group]])
+        S_string = binary_array_to_string(error_syndrome(word_to_array, H))
+
+        # if the is not an error in the word then continue
+        # else correct the error
+        if (S_string == list(error_syndrome_dict.keys())[0]):
+            decoded_word += group
+            continue
+        else:
+            vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(word_to_array, H)))
+            decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
+
+
+    # Print the decoded words
+    print("Decoded word")
+    print(decoded_word)
+
+    # TODO: to be deleted === PAROUSIAZEI TO APOTELSMA OTAN DINOYME LEKSI ME THORIBO
+    # TODO: OPOS STO BIBLIO sel 156-157
+    # S_string = binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H))
+    #
+    # if (S_string == list(error_syndrome_dict.keys())[0]):
+    #     print("ok")
+    # else:
+    #     vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H)))
+    #     print (inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
 
 
 # Calculates error syndrome
 # if result is 0-array then the encode word is correct
 # else the word received with error
 def error_syndrome(c, H):
-    print(np.mod(c.dot(np.transpose(H)), np.array([2])))
+    return np.mod(c.dot(np.transpose(H)), np.array([2]))
+
+# Calculate the correct word
+def error_correction(r, S, n):
+    r = int(binary_array_to_string(r),2)
+    S = int(binary_array_to_string(S),2)
+    return bin(r-S)[2:].zfill(n)
+
+# Convert binary to string
+def binary_array_to_string(binary):
+    string = ""
+    for i in binary:
+        string += str(i)
+    return string
 
 if __name__ == "__main__":
     main()
