@@ -71,19 +71,19 @@ def main():
     print(fano_shannon_result)
     print()
 
-    code_mes = ""
+    encoded_message = ""
 
     for i in dummy_img:
-        code_mes += fano_shannon_result[i]
+        encoded_message += fano_shannon_result[i]
 
-    print("Message length in code:", len(code_mes))
+    print("Encoded Message length:", len(encoded_message))
     print()
-    print("Message code:", code_mes)
+    print("Encoded Message:", encoded_message)
     print()
     print("RGB array:\n" + str(dummy_img))
     print()
 
-    linear_compression(width, height, code_mes)
+    linear_compression(width, height, encoded_message)
 
 
 def fano_shannon(seq, code = ""):
@@ -116,7 +116,7 @@ def fano_shannon(seq, code = ""):
     fano_shannon(group_b, code + "1")
 
 
-def linear_compression(width, height, rgb_code, n=6, k=3):
+def linear_compression(width, height, rgb_code, n=7, k=4):
     # ==========================================================
     # Separate the RGB code into groups of size k
     # ==========================================================
@@ -149,6 +149,12 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
 
     I = np.eye(k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    # TODO: p.153====================================
+    # P= [[0,1,1],[1,0,1],[1,1,0]]
+    # ===============================================
+    # TODO: p.155 decoding working  for n=7 k=4 =====
+    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # ===============================================
     G = np.concatenate((I, P), axis=1)
 
     # D is the binary numbers from 0 to 2^k
@@ -177,10 +183,10 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
     # ==========================================================
 
     # Get encoded values with D*G and then mod 2 on all items
-    all_codes = np.mod(D.dot(G), np.array([2]))
+    C = np.mod(D.dot(G), np.array([2]))
 
-    print("Kwdikes Lekseis:")
-    print(all_codes)
+    print("C (Kwdikes Lekseis):")
+    print(C)
     print()
     print()
 
@@ -188,7 +194,7 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
     codes_dict = {}
 
     for i in range(2**k):
-        codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in all_codes[i])
+        codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in C[i])
 
     print("Pinakas D*G:")
     print(codes_dict)
@@ -231,6 +237,62 @@ def linear_compression(width, height, rgb_code, n=6, k=3):
     print("JSON kai base64:")
     print(json.dumps(data))
 
+
+    # ==========================================================
+    # DECODING
+    # ==========================================================
+
+    #TODO: to be removed
+    print()
+    print("DECODING ================================================")
+    #================================================================
+
+    I_decoding = np.eye(n-k, dtype=int)
+    # Transposed P
+    P_decoding = np.transpose(P)
+    # Parity check array
+    H = np.concatenate((P_decoding, I_decoding), axis=1)
+
+    print("I_decoding:\n" + str(I_decoding))
+    print()
+    print()
+    print("P_decoding:\n" + str(P_decoding))
+    print()
+    print()
+    print("H:\n" + str(H))
+    print()
+    print()
+
+    # H array transposed
+    H_transposed = np.transpose(H)
+    vector_error_array = np.eye(len(H_transposed), dtype=int)
+
+    # Error syndrome dictionary, which will help us to correct any error
+    error_syndrome_dict = {}
+    error_syndrome_dict[bin(0)[2:].zfill(len(H_transposed[0]))] = "".join(str(digit) for digit in C[0])
+    for i in range (H_transposed.shape[0]):
+        error_syndrome_dict["".join(str(digit) for digit in H_transposed[i])] = "".join(str(digit) for digit in vector_error_array[i])
+
+
+
+    print("H_transposed:\n" + str(H_transposed))
+    print()
+    print()
+    print("vector_error_array:\n" + str(vector_error_array))
+    print()
+    print()
+    print("Full error table:\n" + str(error_syndrome_dict))
+    print()
+    print()
+
+
+
+
+# Calculates error syndrome
+# if result is 0-array then the encode word is correct
+# else the word received with error
+def error_syndrome(c, H):
+    print(np.mod(c.dot(np.transpose(H)), np.array([2])))
 
 if __name__ == "__main__":
     main()
