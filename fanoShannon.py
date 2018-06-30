@@ -126,7 +126,7 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
 
     for i in range(0, len(rgb_code), k):
         # If the group size is less than k bits, fill with extra zeros
-        padded_group = rgb_code[i:i+k].zfill(k)
+        padded_group = rgb_code[i:i+k].ljust(k,'0')
         code_groups.append([ int(c) for c in padded_group ])
         code_groups_raw.append(padded_group)
 
@@ -305,7 +305,6 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
         # else correct the error
         if (S_string == list(error_syndrome_dict.keys())[0]):
             decoded_word += group
-            continue
         else:
             vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(word_to_array, H)))
             decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
