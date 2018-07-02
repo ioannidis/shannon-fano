@@ -83,7 +83,13 @@ def main():
     print("RGB array:\n" + str(dummy_img))
     print()
 
-    linear_compression(width, height, encoded_message)
+    # Client
+    # Generate JSON results
+    data = linear_encode(width, height, encoded_message)
+
+    # Server
+    # Receive JSON results
+    linear_decode(data)
 
 
 def fano_shannon(seq, code = ""):
@@ -116,7 +122,8 @@ def fano_shannon(seq, code = ""):
     fano_shannon(group_b, code + "1")
 
 
-def linear_compression(width, height, rgb_code, n=7, k=4):
+def linear_encode(width, height, rgb_code, n=7, k=4):
+    print("CLIENT ================================================")
     # ==========================================================
     # Separate the RGB code into groups of size k
     # ==========================================================
@@ -124,11 +131,22 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
     code_groups = []
     code_groups_raw = []
 
+    # The number of extra zeros appended at the end of the code
+    extra_zeros = 0
+
     for i in range(0, len(rgb_code), k):
-        # If the group size is less than k bits, fill with extra zeros
-        padded_group = rgb_code[i:i+k].ljust(k,'0')
-        code_groups.append([ int(c) for c in padded_group ])
-        code_groups_raw.append(padded_group)
+        group = rgb_code[i:i+k]
+
+        # For group sizes less than k, fill with zeros at the end
+        if len(group) < k:
+            for i in range(k - len(group)):
+                group += "0"
+                extra_zeros += 1
+
+        code_groups.append([ int(c) for c in group ])
+        code_groups_raw.append(group)
+
+    print("Extra Zeros: {}".format(extra_zeros))
 
     # Matrix with all binary digits of a group in individual positions
     code_groups = np.array(code_groups)
@@ -231,23 +249,63 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
         "width": width,
         "height": height,
         "n": n,
-        "k": k
+        "k": k,
+        "extra_zeros": extra_zeros
     }
 
     print("JSON kai base64:")
     print(json.dumps(data))
 
+    return data
+
+
+def linear_decode(data):
+    print("SERVER ================================================")
+
+    # ==========================================================
+    # Data sent from the client
+    # ==========================================================
+
+    c = base64.b64decode(data["data"]).decode()
+    error = data["error"]
+    width = data["width"]
+    height = data["height"]
+    n = data["n"]
+    k = data["k"]
+    extra_zeros = data["extra_zeros"]
+
+    # Same as encoding, but groups now have a size of n
+    # This is because the 'c' variable holds the encoded value
+    code_groups_raw = []
+
+    for i in range(0, len(c), n):
+        code_groups_raw.append(c[i:i+n])
+
+    code_groups_raw = np.array(code_groups_raw)
+
+    I = np.eye(k, dtype=int)
+    P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    G = np.concatenate((I, P), axis=1)
+
+    D = []
+    for i in range(2**k):
+        binaries = np.binary_repr(i, width=k)
+        D.append([ int(c) for c in binaries ])
+
+    D = np.array(D)
+    C = np.mod(D.dot(G), np.array([2]))
+
+    codes_dict = {}
+
+    for i in range(2**k):
+        codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in C[i])
 
     # ==========================================================
     # DECODING
     # ==========================================================
 
-    #TODO: to be removed
-    print()
-    print("DECODING ================================================")
-    #================================================================
-
-    I_decoding = np.eye(n-k, dtype=int)
+    I_decoding = np.eye(n - k, dtype=int)
     # Transposed P
     P_decoding = np.transpose(P)
     # Parity check array
@@ -270,10 +328,8 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
     # Error syndrome dictionary, which will help us to correct any error
     error_syndrome_dict = {}
     error_syndrome_dict[bin(0)[2:].zfill(len(H_transposed[0]))] = "".join(str(digit) for digit in C[0])
-    for i in range (H_transposed.shape[0]):
+    for i in range(H_transposed.shape[0]):
         error_syndrome_dict["".join(str(digit) for digit in H_transposed[i])] = "".join(str(digit) for digit in vector_error_array[i])
-
-
 
     print("H_transposed:\n" + str(H_transposed))
     print()
@@ -285,44 +341,61 @@ def linear_compression(width, height, rgb_code, n=7, k=4):
     print()
     print()
 
-
     # ==========================================================
     # ERROR CORRECTION
     # SERVER SIDE
     # ==========================================================
 
+    inverted_C = {value: key for key, value in codes_dict.items()}
 
-    # TODO: THA PREPEI NA GINEI TO DECODING KAI I EPANAFORA SE KOMATIA
-    # TODO: GIA TIN ORA TA PAIRNO ATOFIA APO PROIGOUMENO BIMA
-    inverted_C =  {value: key for key, value in codes_dict.items()}
+    print("Inverted C:\n" + str(inverted_C))
+    print()
+    print()
+    print("Code Groups Raw:\n" + str(code_groups_raw))
+    print()
 
     decoded_word = ""
+
     for group in code_groups_raw:
-        word_to_array = np.array([int(bit) for bit in codes_dict[group]])
+        word_to_array = np.array([int(bit) for bit in group])
         S_string = binary_array_to_string(error_syndrome(word_to_array, H))
+
+        print("Received part: " + group)
+        print("Syndrome: " + S_string)
 
         # if the is not an error in the word then continue
         # else correct the error
-        if (S_string == list(error_syndrome_dict.keys())[0]):
-            decoded_word += group
+        if S_string == list(error_syndrome_dict.keys())[0]:
+            decoded_word += inverted_C[group]
+            print("Adding decoded part: " + inverted_C[group])
         else:
-            vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(word_to_array, H)))
+            vector_error = error_syndrome_dict.get(S_string)
+            print("Error vector: " + str(vector_error))
             decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
+            print("Adding decoded party after error: " + inverted_C[error_correction(word_to_array, vector_error, n)])
+        print()
 
+    print()
 
     # Print the decoded words
-    print("Decoded word")
-    print(decoded_word)
+    print("Decoded Word:\t\t" + decoded_word)
+
+    decoded_word_without_extra_zeros = decoded_word[0:len(decoded_word) - extra_zeros]
+
+    print("Without extra zeros:\t" + decoded_word_without_extra_zeros)
 
     # TODO: to be deleted === PAROUSIAZEI TO APOTELSMA OTAN DINOYME LEKSI ME THORIBO
     # TODO: OPOS STO BIBLIO sel 156-157
     # S_string = binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H))
     #
-    # if (S_string == list(error_syndrome_dict.keys())[0]):
+    # print(S_string)
+    #
+    # if S_string == list(error_syndrome_dict.keys())[0]:
     #     print("ok")
     # else:
-    #     vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H)))
+    #     vector_error = error_syndrome_dict.get(S_string)
     #     print (inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
+
 
 
 # Calculates error syndrome
