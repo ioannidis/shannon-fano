@@ -378,7 +378,11 @@ def linear_decode(data):
     print()
 
     # Print the decoded words
-    print("Decoded word: " + decoded_word)
+    print("Decoded Word:\t\t" + decoded_word)
+
+    decoded_word_without_extra_zeros = decoded_word[0:len(decoded_word) - extra_zeros]
+
+    print("Without extra zeros:\t" + decoded_word_without_extra_zeros)
 
     # TODO: to be deleted === PAROUSIAZEI TO APOTELSMA OTAN DINOYME LEKSI ME THORIBO
     # TODO: OPOS STO BIBLIO sel 156-157
@@ -391,6 +395,7 @@ def linear_decode(data):
     # else:
     #     vector_error = error_syndrome_dict.get(S_string)
     #     print (inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
+
 
 
 # Calculates error syndrome
