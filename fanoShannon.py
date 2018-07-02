@@ -274,6 +274,15 @@ def linear_decode(data):
     k = data["k"]
     extra_zeros = data["extra_zeros"]
 
+    # Same as encoding, but groups now have a size of n
+    # This is because the 'c' variable holds the encoded value
+    code_groups_raw = []
+
+    for i in range(0, len(c), n):
+        code_groups_raw.append(c[i:i+n])
+
+    code_groups_raw = np.array(code_groups_raw)
+
     I = np.eye(k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
     P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
@@ -337,36 +346,50 @@ def linear_decode(data):
     # SERVER SIDE
     # ==========================================================
 
-
-    # TODO: THA PREPEI NA GINEI TO DECODING KAI I EPANAFORA SE KOMATIA
-    # TODO: GIA TIN ORA TA PAIRNO ATOFIA APO PROIGOUMENO BIMA
     inverted_C = {value: key for key, value in codes_dict.items()}
 
+    print("Inverted C:\n" + str(inverted_C))
+    print()
+    print()
+    print("Code Groups Raw:\n" + str(code_groups_raw))
+    print()
+
     decoded_word = ""
+
     for group in code_groups_raw:
-        word_to_array = np.array([int(bit) for bit in codes_dict[group]])
+        word_to_array = np.array([int(bit) for bit in group])
         S_string = binary_array_to_string(error_syndrome(word_to_array, H))
+
+        print("Received part: " + group)
+        print("Syndrome: " + S_string)
 
         # if the is not an error in the word then continue
         # else correct the error
-        if (S_string == list(error_syndrome_dict.keys())[0]):
-            decoded_word += group
+        if S_string == list(error_syndrome_dict.keys())[0]:
+            decoded_word += inverted_C[group]
+            print("Adding decoded part: " + inverted_C[group])
         else:
-            vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(word_to_array, H)))
+            vector_error = error_syndrome_dict.get(S_string)
+            print("Error vector: " + str(vector_error))
             decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
+            print("Adding decoded party after error: " + inverted_C[error_correction(word_to_array, vector_error, n)])
+        print()
+
+    print()
 
     # Print the decoded words
-    print("Decoded word")
-    print(decoded_word)
+    print("Decoded word: " + decoded_word)
 
     # TODO: to be deleted === PAROUSIAZEI TO APOTELSMA OTAN DINOYME LEKSI ME THORIBO
     # TODO: OPOS STO BIBLIO sel 156-157
     # S_string = binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H))
     #
-    # if (S_string == list(error_syndrome_dict.keys())[0]):
+    # print(S_string)
+    #
+    # if S_string == list(error_syndrome_dict.keys())[0]:
     #     print("ok")
     # else:
-    #     vector_error = error_syndrome_dict.get(binary_array_to_string(error_syndrome(np.array([1,1,1,1,0,1,0]), H)))
+    #     vector_error = error_syndrome_dict.get(S_string)
     #     print (inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
 
 
