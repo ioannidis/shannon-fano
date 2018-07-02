@@ -171,7 +171,7 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     # P= [[0,1,1],[1,0,1],[1,1,0]]
     # ===============================================
     # TODO: p.155 decoding working  for n=7 k=4 =====
-    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
     # ===============================================
     G = np.concatenate((I, P), axis=1)
 
@@ -250,6 +250,7 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
         "height": height,
         "n": n,
         "k": k,
+        "P": P.tolist(),
         "extra_zeros": extra_zeros
     }
 
@@ -272,8 +273,12 @@ def linear_decode(data):
     height = data["height"]
     n = data["n"]
     k = data["k"]
+    P = np.array(data["P"])
     extra_zeros = data["extra_zeros"]
 
+    print()
+    print(data["P"])
+    print()
     # Same as encoding, but groups now have a size of n
     # This is because the 'c' variable holds the encoded value
     code_groups_raw = []
@@ -284,8 +289,10 @@ def linear_decode(data):
     code_groups_raw = np.array(code_groups_raw)
 
     I = np.eye(k, dtype=int)
-    P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
-    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # TODO: to be deleted ===== only for testing =================
+    # P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    # P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # =============================================================
     G = np.concatenate((I, P), axis=1)
 
     D = []
