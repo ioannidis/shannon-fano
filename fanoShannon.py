@@ -4,6 +4,7 @@ import base64
 import json
 from operator import itemgetter
 from collections import OrderedDict
+import secrets
 
 fano_shannon_result = {}
 
@@ -94,7 +95,7 @@ def main():
 
     # Client
     # Generate JSON results
-    data = linear_encode(width, height, encoded_message)
+    data = linear_encode(width, height, encoded_message, 8)
 
     # Server
     # Receive JSON results
@@ -131,7 +132,7 @@ def fano_shannon(seq, code = ""):
     fano_shannon(group_b, code + "1")
 
 
-def linear_encode(width, height, rgb_code, n=7, k=4):
+def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     print("CLIENT ================================================")
     # ==========================================================
     # Separate the RGB code into groups of size k
@@ -246,15 +247,28 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     print(c)
     print()
 
+    c_array = list(c)
+
+    for i in range(error):
+        index = secrets.randbelow(len(c_array))
+        c_array[index] = "1" if c_array[index] == "0" else "0"
+
+    c_error = "".join(c_array)
+
+    print("Telikos grammikos kwdkikas me ERROR:")
+    print(c_error)
+    print()
+    print()
+
     # ==========================================================
     # JSON data
     # ==========================================================
 
-    encoded = base64.b64encode(c.encode())
+    encoded = base64.b64encode(c_error.encode())
 
     data = {
         "data": encoded.decode(),
-        "error": 0, # TODO: Fill error value
+        "error": error,
         "width": width,
         "height": height,
         "n": n,
