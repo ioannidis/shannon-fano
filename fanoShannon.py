@@ -176,11 +176,16 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     # ==========================================================
 
     I = np.eye(k, dtype=int)
+    I_decoding = np.eye(n - k, dtype=int)
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
 
-    while len(np.unique(P, axis=0)) < P.shape[0]:
+    intersect = np.array([x for x in set(tuple(x) for x in I_decoding) & set(tuple(x) for x in P)])
+
+    while len(np.unique(P, axis=0)) < P.shape[0] or intersect.shape[0] != 0:
         print("Generating new P...")
         P = np.random.randint(low=0, high=2, size=(k, n - k), dtype=int)
+        intersect = np.array([x for x in set(tuple(x) for x in I_decoding) & set(tuple(x) for x in P)])
+
 
     # TODO: p.153====================================
     # P= [[0,1,1],[1,0,1],[1,1,0]]
