@@ -176,15 +176,27 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     # ==========================================================
 
     I = np.eye(k, dtype=int)
-    I_decoding = np.eye(n - k, dtype=int)
+    I_decoding2 = np.eye(n - k, dtype=int)
+
+    zeros = np.zeros(n - k, dtype=int)
+
+    print("dasdasdasdasdasdasdasdasd")
+    print(I_decoding2)
+    print(zeros)
+
+    np.concatenate((I_decoding2, np.array(zeros)), axis=1)
+
+    print("dasdasdasdasdasdasdasdasd")
+    print(I_decoding2)
+
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
 
-    intersect = np.array([x for x in set(tuple(x) for x in I_decoding) & set(tuple(x) for x in P)])
+    intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
 
     while len(np.unique(P, axis=0)) < P.shape[0] or intersect.shape[0] != 0:
         print("Generating new P...")
         P = np.random.randint(low=0, high=2, size=(k, n - k), dtype=int)
-        intersect = np.array([x for x in set(tuple(x) for x in I_decoding) & set(tuple(x) for x in P)])
+        intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
 
 
     # TODO: p.153====================================
@@ -368,7 +380,10 @@ def linear_decode(data):
     # Error syndrome dictionary, which will help us to correct any error
     error_syndrome_dict = {}
     error_syndrome_dict[bin(0)[2:].zfill(len(H_transposed[0]))] = "".join(str(digit) for digit in C[0])
+
     for i in range(H_transposed.shape[0]):
+        print(i)
+        print(vector_error_array[i])
         error_syndrome_dict["".join(str(digit) for digit in H_transposed[i])] = "".join(str(digit) for digit in vector_error_array[i])
 
     print("H_transposed:\n" + str(H_transposed))
@@ -411,6 +426,7 @@ def linear_decode(data):
         else:
             vector_error = error_syndrome_dict.get(S_string)
             print("Error vector: " + str(vector_error))
+            print("Error correction => " + error_correction(word_to_array, vector_error, n))
             decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
             print("Adding decoded party after error: " + inverted_C[error_correction(word_to_array, vector_error, n)])
         print()
