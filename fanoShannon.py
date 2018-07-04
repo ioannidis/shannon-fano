@@ -49,9 +49,9 @@ def main():
     # print((sorted(count.items(), key= lambda x: x[1], reverse=True)))
     count_sorted = {}
     # TODO: to be removed, only for testing ============================
-    dummy_img = [173, 172, 85, 173, 88, 88, 100, 86, 92, 160]
-    ex1_book = {173: 0.5, 88: 0.2, 86: 0.1, 100: 0.1, 92: 0.1}
-    ex2_book = {173: 0.35, 88: 0.15, 86: 0.15, 100: 0.13, 92: 0.12, 160: 0.06, 85: 0.03, 172: 0.01}
+    # dummy_img = [173, 172, 85, 173, 88, 88, 100, 86, 92, 160]
+    # ex1_book = {173: 0.5, 88: 0.2, 86: 0.1, 100: 0.1, 92: 0.1}
+    # ex2_book = {173: 0.35, 88: 0.15, 86: 0.15, 100: 0.13, 92: 0.12, 160: 0.06, 85: 0.03, 172: 0.01}
     # ==================================================================
 
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
@@ -64,7 +64,10 @@ def main():
 
     print()
     print("Fano-Shanno Coding: ")
-    fano_shannon(ex2_book)
+    # TODO: to be deleted ===== for testing
+    #fano_shannon(ex2_book)
+    # =====================================
+    fano_shannon(count_sorted)
 
     # for i in sorted(fano_shannon_result):
     #     print(i, "=", fano_shannon_result[i])
@@ -73,14 +76,20 @@ def main():
 
     encoded_message = ""
 
-    for i in dummy_img:
+    # TODO: to be deleted ===== for testing
+    #for i in dummy_img:
+    #======================================
+    for i in count:
         encoded_message += fano_shannon_result[i]
 
     print("Encoded Message length:", len(encoded_message))
     print()
     print("Encoded Message:", encoded_message)
     print()
-    print("RGB array:\n" + str(dummy_img))
+    # TODO: to be deleted ===== for testing
+    # print("RGB array:\n" + str(dummy_img))
+    # ======================================
+    print("RGB array:\n" + str(count))
     print()
 
     # Client
@@ -171,7 +180,7 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     # P= [[0,1,1],[1,0,1],[1,1,0]]
     # ===============================================
     # TODO: p.155 decoding working  for n=7 k=4 =====
-    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
     # ===============================================
     G = np.concatenate((I, P), axis=1)
 
@@ -250,6 +259,7 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
         "height": height,
         "n": n,
         "k": k,
+        "P": P.tolist(),
         "extra_zeros": extra_zeros
     }
 
@@ -272,8 +282,12 @@ def linear_decode(data):
     height = data["height"]
     n = data["n"]
     k = data["k"]
+    P = np.array(data["P"])
     extra_zeros = data["extra_zeros"]
 
+    print()
+    print(data["P"])
+    print()
     # Same as encoding, but groups now have a size of n
     # This is because the 'c' variable holds the encoded value
     code_groups_raw = []
@@ -284,8 +298,10 @@ def linear_decode(data):
     code_groups_raw = np.array(code_groups_raw)
 
     I = np.eye(k, dtype=int)
-    P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
-    P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # TODO: to be deleted ===== only for testing =================
+    # P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+    # P = [[1,1,1],[1,1,0],[1,0,1], [0,1,1]]
+    # =============================================================
     G = np.concatenate((I, P), axis=1)
 
     D = []
