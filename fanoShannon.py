@@ -177,17 +177,9 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
 
     I = np.eye(k, dtype=int)
     I_decoding2 = np.eye(n - k, dtype=int)
+    zeros = [np.zeros(n - k, dtype=int)]
 
-    zeros = np.zeros(n - k, dtype=int)
-
-    print("dasdasdasdasdasdasdasdasd")
-    print(I_decoding2)
-    print(zeros)
-
-    np.concatenate((I_decoding2, np.array(zeros)), axis=1)
-
-    print("dasdasdasdasdasdasdasdasd")
-    print(I_decoding2)
+    I_decoding2 = np.append(I_decoding2, np.array(zeros), axis=0)
 
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
 
