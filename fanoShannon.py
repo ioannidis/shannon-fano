@@ -4,6 +4,8 @@ import base64
 import json
 from operator import itemgetter
 from collections import OrderedDict
+import secrets
+import random
 
 fano_shannon_result = {}
 
@@ -94,7 +96,7 @@ def main():
 
     # Client
     # Generate JSON results
-    data = linear_encode(width, height, encoded_message)
+    data = linear_encode(width, height, encoded_message, 5)
 
     # Server
     # Receive JSON results
@@ -131,7 +133,7 @@ def fano_shannon(seq, code = ""):
     fano_shannon(group_b, code + "1")
 
 
-def linear_encode(width, height, rgb_code, n=7, k=4):
+def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     print("CLIENT ================================================")
     # ==========================================================
     # Separate the RGB code into groups of size k
@@ -175,7 +177,20 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     # ==========================================================
 
     I = np.eye(k, dtype=int)
+    I_decoding2 = np.eye(n - k, dtype=int)
+    zeros = [np.zeros(n - k, dtype=int)]
+
+    I_decoding2 = np.append(I_decoding2, np.array(zeros), axis=0)
+
     P = np.random.randint(low=0, high=2, size=(k, n-k), dtype=int)
+
+    intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
+
+    while len(np.unique(P, axis=0)) < P.shape[0] or intersect.shape[0] != 0:
+        P = np.random.randint(low=0, high=2, size=(k, n - k), dtype=int)
+        intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
+
+
     # TODO: p.153====================================
     # P= [[0,1,1],[1,0,1],[1,1,0]]
     # ===============================================
@@ -231,12 +246,18 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     # ==========================================================
     # Create a string result with the code for each group
     # ==========================================================
-
     c = ""
     print("Group\t\tCode")
     for group in code_groups_raw:
         print("{}\t=>\t{}".format(group, codes_dict[group]))
-        c += codes_dict[group]
+        if error > 0:
+            zero_pos = [pos for pos, char in enumerate(codes_dict.get(group)) if char == '0']
+            temp_string_list = list(codes_dict.get(group))
+            temp_string_list[random.choice(zero_pos)] = '1'
+            c += ''.join(temp_string_list)
+            error -= 1
+        else:
+            c += codes_dict[group]
 
     print()
     print("Arxikos kwdikas apo fano-shannon:")
@@ -246,6 +267,41 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
     print(c)
     print()
 
+    # TODO: to be deleted ==========================================================
+    # Adding noise
+    # ==========================================================
+    # print(set(code_groups_raw))
+    # if error > 0:
+    #     for group in code_groups_raw:
+    #         zero_pos = [pos for pos, char in enumerate(codes_dict.get(group)) if char == '0']
+    #         temp_string_list = list(codes_dict.get(group))
+    #         temp_string_list[random.choice(zero_pos)] = '1'
+    #         codes_dict[group] = ''.join(temp_string_list)
+    #
+    #         error -= 1
+    #         if  error <= 0:
+    #             break
+    # ==============================================================================
+
+    # TODO: to be deleted ==========================================================
+    # Create a string result with the code for each group
+    # ==========================================================
+    # c = ""
+    # print("Group\t\tCode")
+    # for group in code_groups_raw:
+    #     print("{}\t=>\t{}".format(group, codes_dict[group]))
+    #     c += codes_dict[group]
+    #
+    #
+    # c_final = c
+    #
+    #
+    # print("Telikos grammikos kwdkikas me ERROR:")
+    # print(c_final)
+    # print()
+    # print()
+    # ==============================================================================
+
     # ==========================================================
     # JSON data
     # ==========================================================
@@ -254,7 +310,7 @@ def linear_encode(width, height, rgb_code, n=7, k=4):
 
     data = {
         "data": encoded.decode(),
-        "error": 0, # TODO: Fill error value
+        "error": error,
         "width": width,
         "height": height,
         "n": n,
@@ -344,6 +400,7 @@ def linear_decode(data):
     # Error syndrome dictionary, which will help us to correct any error
     error_syndrome_dict = {}
     error_syndrome_dict[bin(0)[2:].zfill(len(H_transposed[0]))] = "".join(str(digit) for digit in C[0])
+
     for i in range(H_transposed.shape[0]):
         error_syndrome_dict["".join(str(digit) for digit in H_transposed[i])] = "".join(str(digit) for digit in vector_error_array[i])
 
@@ -387,6 +444,7 @@ def linear_decode(data):
         else:
             vector_error = error_syndrome_dict.get(S_string)
             print("Error vector: " + str(vector_error))
+            print("Error correction => " + error_correction(word_to_array, vector_error, n))
             decoded_word += inverted_C[error_correction(word_to_array, vector_error, n)]
             print("Adding decoded party after error: " + inverted_C[error_correction(word_to_array, vector_error, n)])
         print()
@@ -410,7 +468,9 @@ def linear_decode(data):
     #     print("ok")
     # else:
     #     vector_error = error_syndrome_dict.get(S_string)
-    #     print (inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
+    #     print("Error vector: " + str(vector_error))
+    #     decoded_word += inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)]
+    #     print("Adding decoded party after error: " + inverted_C[error_correction(np.array([1,1,1,1,0,1,0]), vector_error, n)])
 
 
 
