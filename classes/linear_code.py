@@ -1,6 +1,5 @@
 import numpy as np
 import base64
-import json
 import random
 
 class LinearCode:
@@ -8,7 +7,6 @@ class LinearCode:
         pass
 
     def encode(self, width, height, rgb_code, n=7, k=4, error=5):
-        print("\nCLIENT ================================================\n")
         # ==========================================================
         # Separate the RGB code into groups of size k
         # ==========================================================
@@ -113,8 +111,6 @@ class LinearCode:
         return data
 
     def decode(self, data):
-        print("\nSERVER ================================================\n")
-
         # ==========================================================
         # Data sent from the client
         # ==========================================================
