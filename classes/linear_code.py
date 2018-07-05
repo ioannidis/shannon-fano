@@ -1,14 +1,14 @@
 import numpy as np
 import base64
-
+import json
+import random
 
 class LinearCode:
     def __init__(self):
         pass
 
-    def encode(self, width, height, rgb_code, n=7, k=4):
+    def encode(self, width, height, rgb_code, n=7, k=4, error=5):
         print("\nCLIENT ================================================\n")
-
         # ==========================================================
         # Separate the RGB code into groups of size k
         # ==========================================================
@@ -40,7 +40,19 @@ class LinearCode:
         # ==========================================================
 
         I = np.eye(k, dtype=int)
+        I_decoding2 = np.eye(n - k, dtype=int)
+        zeros = [np.zeros(n - k, dtype=int)]
+
+        I_decoding2 = np.append(I_decoding2, np.array(zeros), axis=0)
+
         P = np.random.randint(low=0, high=2, size=(k, n - k), dtype=int)
+
+        intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
+
+        while len(np.unique(P, axis=0)) < P.shape[0] or intersect.shape[0] != 0:
+            P = np.random.randint(low=0, high=2, size=(k, n - k), dtype=int)
+            intersect = np.array([x for x in set(tuple(x) for x in I_decoding2) & set(tuple(x) for x in P)])
+
         G = np.concatenate((I, P), axis=1)
 
         # D is the binary numbers from 0 to 2^k
@@ -67,11 +79,19 @@ class LinearCode:
         # ==========================================================
         # Create a string result with the code for each group
         # ==========================================================
-
         c = ""
 
+        initial_error = error
+
         for group in code_groups_raw:
-            c += codes_dict[group]
+            if error > 0:
+                zero_pos = [pos for pos, char in enumerate(codes_dict.get(group)) if char == '0']
+                temp_string_list = list(codes_dict.get(group))
+                temp_string_list[random.choice(zero_pos)] = '1'
+                c += ''.join(temp_string_list)
+                error -= 1
+            else:
+                c += codes_dict[group]
 
         # ==========================================================
         # JSON data
@@ -81,7 +101,7 @@ class LinearCode:
 
         data = {
             "data": encoded.decode(),
-            "error": 0,  # TODO: Fill error value
+            "error": initial_error,
             "width": width,
             "height": height,
             "n": n,
@@ -150,6 +170,7 @@ class LinearCode:
         # Error syndrome dictionary, which will help us to correct any error
         error_syndrome_dict = {}
         error_syndrome_dict[bin(0)[2:].zfill(len(H_transposed[0]))] = "".join(str(digit) for digit in C[0])
+
         for i in range(H_transposed.shape[0]):
             error_syndrome_dict["".join(str(digit) for digit in H_transposed[i])] = "".join(str(digit) for digit in vector_error_array[i])
 
@@ -175,6 +196,7 @@ class LinearCode:
                 decoded_word += inverted_C[self.error_correction(word_to_array, vector_error, n)]
 
         decoded_word_without_extra_zeros = decoded_word[0:len(decoded_word) - extra_zeros]
+
         return decoded_word_without_extra_zeros
 
 
