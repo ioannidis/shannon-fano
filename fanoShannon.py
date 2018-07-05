@@ -6,6 +6,7 @@ from operator import itemgetter
 from collections import OrderedDict
 import secrets
 import random
+import math
 
 fano_shannon_result = {}
 
@@ -55,6 +56,10 @@ def main():
     # ex1_book = {173: 0.5, 88: 0.2, 86: 0.1, 100: 0.1, 92: 0.1}
     # ex2_book = {173: 0.35, 88: 0.15, 86: 0.15, 100: 0.13, 92: 0.12, 160: 0.06, 85: 0.03, 172: 0.01}
     # ==================================================================
+
+    entropy_value = entropy(count.values())
+    # Calculates and prints entropy
+    print(entropy_value)
 
     for i in (sorted(count.items(), key= lambda x: x[1], reverse=True)):
         count_sorted[i[0]] = i[1]
@@ -492,6 +497,14 @@ def binary_array_to_string(binary):
     for i in binary:
         string += str(i)
     return string
+
+def entropy(probability):
+    probability_list = sorted(list(probability))
+
+    entropy = 0
+    for i in probability_list:
+        entropy += i*math.log(1/i, 2)
+    return entropy
 
 if __name__ == "__main__":
     main()
