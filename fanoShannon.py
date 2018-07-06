@@ -67,6 +67,7 @@ def main():
     print()
 
     # TODO: to br removed --- prints sorted dict
+    print("adada")
     print(count_sorted)
 
     print()
@@ -78,6 +79,7 @@ def main():
 
     # for i in sorted(fano_shannon_result):
     #     print(i, "=", fano_shannon_result[i])
+    print("aek")
     print(fano_shannon_result)
     print()
 
@@ -86,7 +88,7 @@ def main():
     # TODO: to be deleted ===== for testing
     #for i in dummy_img:
     #======================================
-    for i in count:
+    for i in count_sorted:
         encoded_message += fano_shannon_result[i]
 
     print("Encoded Message length:", len(encoded_message))
@@ -101,7 +103,7 @@ def main():
 
     # Client
     # Generate JSON results
-    data = linear_encode(width, height, encoded_message, 5)
+    data = linear_encode(width, height, encoded_message, 0)
 
     # Server
     # Receive JSON results
@@ -232,7 +234,7 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     # Get encoded values with D*G and then mod 2 on all items
     C = np.mod(D.dot(G), np.array([2]))
 
-    print("C (Kwdikes Lekseis):")
+    print("C:")
     print(C)
     print()
     print()
@@ -243,7 +245,7 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
     for i in range(2**k):
         codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in C[i])
 
-    print("Pinakas D*G:")
+    print("D*G:")
     print(codes_dict)
     print()
     print()
@@ -265,10 +267,10 @@ def linear_encode(width, height, rgb_code, error=0, n=7, k=4):
             c += codes_dict[group]
 
     print()
-    print("Arxikos kwdikas apo fano-shannon:")
+    print("Fano-Shannon code:")
     print(rgb_code)
     print()
-    print("Telikos grammikos kwdikas:")
+    print("Linear code:")
     print(c)
     print()
 
