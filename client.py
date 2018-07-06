@@ -1,3 +1,12 @@
+"""
+    Theoria pliroforion kai kodikon
+    Ioulios 2018
+
+    == Developed using Python 3.6.5 by ==
+    == p16036 - Ioannidis Panagiotis   ==
+    == p16097 - Nikas Dionisis         ==
+    == p16112 - PAravantis Athanasios  ==
+"""
 from classes.fano_shannon import FanoShannon
 from classes.linear_code import LinearCode
 from PIL import Image
@@ -94,12 +103,18 @@ def main():
     fn = FanoShannon()
     fn.compress(count_sorted)
 
+
+
     # Construct the compressed fano shannon string from the mappings
     fano_shannon_result = ""
     results = fn.get_mappings()
 
-    for i in count:
+    for i in count_sorted:
         fano_shannon_result += results[i]
+
+    print()
+    print("Fano-Shannon coding: ")
+    print(results)
 
     print("\nFano Shannon compression result: {}\n".format(fano_shannon_result))
 

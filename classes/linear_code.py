@@ -1,3 +1,12 @@
+"""
+    Theoria pliroforion kai kodikon
+    Ioulios 2018
+
+    == Developed using Python 3.6.5 by ==
+    == p16036 - Ioannidis Panagiotis   ==
+    == p16097 - Nikas Dionisis         ==
+    == p16112 - PAravantis Athanasios  ==
+"""
 import numpy as np
 import base64
 import random
@@ -81,7 +90,7 @@ class LinearCode:
         # Get encoded values with D*G and then mod 2 on all items
         C = np.mod(D.dot(G), np.array([2]))
 
-        print("C (Kwdikes Lekseis):")
+        print("C:")
         print(str(C) + "\n\n")
 
         # Dictionary with all possible groups and their code
@@ -90,7 +99,7 @@ class LinearCode:
         for i in range(2 ** k):
             codes_dict["".join(str(digit) for digit in D[i])] = "".join(str(digit) for digit in C[i])
 
-        print("Pinakas D*G:")
+        print("D*G:")
         print(str(codes_dict) + "\n\n")
 
         # ==========================================================
@@ -113,9 +122,9 @@ class LinearCode:
             else:
                 c += codes_dict[group]
 
-        print("\nArxikos kwdikas apo fano-shannon:")
+        print("\nFano-Shannon code:")
         print(str(rgb_code) + "\n")
-        print("Telikos grammikos kwdikas:")
+        print("Code after linear code encoding:")
         print(str(c) + "\n")
 
         # ==========================================================
@@ -135,7 +144,7 @@ class LinearCode:
             "extra_zeros": extra_zeros
         }
 
-        print("JSON kai base64:")
+        print("JSON and base64:")
         print(json.dumps(data) + "\n\n")
 
         return c, data

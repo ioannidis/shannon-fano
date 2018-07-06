@@ -1,3 +1,12 @@
+"""
+    Theoria pliroforion kai kodikon
+    Ioulios 2018
+
+    == Developed using Python 3.6.5 by ==
+    == p16036 - Ioannidis Panagiotis   ==
+    == p16097 - Nikas Dionisis         ==
+    == p16112 - PAravantis Athanasios  ==
+"""
 import math
 
 class FanoShannon:
