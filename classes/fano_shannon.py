@@ -1,3 +1,5 @@
+import math
+
 class FanoShannon:
     def __init__(self):
         self.result = {}
@@ -33,3 +35,11 @@ class FanoShannon:
 
     def get_mappings(self):
         return self.result
+
+    def get_entropy(self, probabilities):
+        probability_list = sorted(list(probabilities))
+
+        entropy = 0
+        for i in probability_list:
+            entropy += i*math.log(1/i, 2)
+        return entropy
