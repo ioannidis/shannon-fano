@@ -1,3 +1,14 @@
+"""
+    Theoria pliroforion kai kodikon
+    Ioulios 2018
+
+    == Developed using Python 3.6.5 by ==
+    == p16036 - Ioannidis Panagiotis   ==
+    == p16097 - Nikas Dionisis         ==
+    == p16112 - Paravantis Athanasios  ==
+"""
+import math
+
 class FanoShannon:
     def __init__(self):
         self.result = {}
@@ -33,3 +44,11 @@ class FanoShannon:
 
     def get_mappings(self):
         return self.result
+
+    def get_entropy(self, probabilities):
+        probability_list = sorted(list(probabilities))
+
+        entropy = 0
+        for i in probability_list:
+            entropy += i*math.log(1/i, 2)
+        return entropy
