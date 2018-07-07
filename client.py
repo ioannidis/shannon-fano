@@ -5,7 +5,7 @@
     == Developed using Python 3.6.5 by ==
     == p16036 - Ioannidis Panagiotis   ==
     == p16097 - Nikas Dionisis         ==
-    == p16112 - PAravantis Athanasios  ==
+    == p16112 - Paravantis Athanasios  ==
 """
 from classes.fano_shannon import FanoShannon
 from classes.linear_code import LinearCode
@@ -137,7 +137,7 @@ def main():
         sock.sendall(message)
 
         # Wait until the server responds
-        data = sock.recv(1024)
+        data = sock.recv(8192)
         print("[INFO] Received data from server: {}.\n".format(data.decode("utf-8")))
     finally:
         print("[INFO] Closing socket.\n")

@@ -5,7 +5,7 @@
     == Developed using Python 3.6.5 by ==
     == p16036 - Ioannidis Panagiotis   ==
     == p16097 - Nikas Dionisis         ==
-    == p16112 - PAravantis Athanasios  ==
+    == p16112 - Paravantis Athanasios  ==
 """
 from classes.linear_code import LinearCode
 import socket
@@ -27,7 +27,7 @@ def main():
 
     try:
         # Wait for the JSON data to be received
-        data = connection.recv(1024)
+        data = connection.recv(8192)
         print("[INFO] Received data from client: {}.\n".format(data.decode("utf-8")))
 
         # Decode using the linear code algorithm

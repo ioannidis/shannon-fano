@@ -5,7 +5,7 @@
     == Developed using Python 3.6.5 by ==
     == p16036 - Ioannidis Panagiotis   ==
     == p16097 - Nikas Dionisis         ==
-    == p16112 - PAravantis Athanasios  ==
+    == p16112 - Paravantis Athanasios  ==
 """
 import math
 
