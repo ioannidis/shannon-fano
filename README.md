@@ -1,8 +1,8 @@
-# fano_shannon
-Linear code using Fano Shannon
+# Shannon-Fanno Coding
+A group project in Python that was developed for a university assignment on the subject of Code and Information Theory.
 
-Ο πομπός παίρνει από τον χρήστη σαν είσοδο μία εικόνα, το μήκος του κώδικα και ότι άλλες παραμέτρους χρειάζεται για να τον δημιουργήσει αλλά και μία τιμή που καθορίζει την ένταση του θορύβου. Λαμβάνοντας την εικόνα, το πρόγραμμά σας την μετατρέπει σε ένα διάνυσμα RGB τιμών, τις οποίες θα πρέπει να συμπιέσετε. Στην συνέχεια, το συμπιεσμένο string το κωδικοποιείτε με τον αντίστοιχο κώδικα και του προσθέτετε το αντίστοιχο θόρυβο (πχ ένταση 5 σημαίνει ότι αλλάζετε μέχρι 5 bit) Το αποτέλεσμα είναι ένα string το οποίο το κωδικοποιείτε σε base64 και στέλνετε στον παραλήπτη ένα json το οποίο περιέχει τις διαστάσεις της εικόνας, το μήκος του κώδικα (και ότι άλλες παραμέτρους χρειάζεστε) και το κωδικοποιημένο string.
+**Features:**  
+This is a client-server program written in Python using socket. It simulates a simple exchange of an image between the client and the server. Once the user inputs specific parameters on how the image should be compressed, the Shannon-Fano coding is applied. Once the image is compressed and sent from the client, the server applies decompression to reconstruct the image.
 
-Μόλις ο πομπός αποστείλει το μήνυμά του, εμφανίζει μήνυμα στο χρήστη με στατιστικά:
-
-Αρχικό μέγεθος αρχείου, εντροπιία, τελικό μέγεθος αρχείου και πόσα bits προσθέθηκαν.
+**Group members involved in this project:**  
+Ioannidis Panagiotis, Paravantis Athanasios, Nikas Dionisios
