@@ -1,4 +1,4 @@
-# Shannon-Fanno Coding
+# Shannon-Fano Coding
 A group project in Python that was developed for a university assignment on the subject of Code and Information Theory.
 
 **Features:**  
